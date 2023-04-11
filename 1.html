@@ -1,0 +1,77 @@
+<style>
+div#container {
+    padding: 30px;
+    
+}
+input {
+    background-color: #ccc;
+    padding: 0;
+    width: 600px;
+    color: #777;
+}
+a{
+    color: #777;
+    display: block;
+	text-align:center;
+    background-color: #ccc; 
+    width: 100px;
+    padding: 0;
+    margin-top: 2px;
+	margin-left: 30px;
+    text-decoration:none;
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.5.0/fabric.min.js"></script>
+
+<div id="container">
+    <input type="file" id="imageLoader" name="imageLoader" />
+    <canvas id="imageCanvas" width="600" height="400"></canvas> 
+    
+</div>
+<a id="lnkDownload" href="#">Save image</a>
+<script>
+var canvas = new fabric.Canvas('imageCanvas', {
+    backgroundColor: 'rgb(240,240,240)'
+});
+canvas.setWidth(600);
+canvas.setHeight(400);
+
+
+
+var imageLoader = document.getElementById('imageLoader');
+imageLoader.addEventListener('change', handleImage, false);
+
+function handleImage(e) {
+    var objects = canvas.getObjects();
+    for (var i in objects) {
+       objects[i].remove();
+    }
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var img = new Image();
+        img.onload = function () {
+            var imgInstance = new fabric.Image(img, {
+               selectable: 1
+            })
+            canvas.add(imgInstance);
+            canvas.deactivateAll().renderAll();
+        }
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);
+}
+
+
+
+var imageSaver = document.getElementById('lnkDownload');
+imageSaver.addEventListener('click', saveImage, false);
+
+function saveImage(e) {
+    this.href = canvas.toDataURL({
+        format: 'png',
+        quality: 0.8
+    });
+    this.download = 'canvas.png'
+}
+</script>
